@@ -1,11 +1,380 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Signal-Based Management Systems | Understanding the Snap</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
+       
+		:root {
+			--bg-slate-950: #020617;
+			--fuchsia-500: #e879f9;
+			--cyan-400: #22d3ee;
+			--amber-500: #f59e0b;
+		}
+
+
+		body {
+			background-color: var(--bg-slate-950);
+			color: #f8fafc;
+			font-family: 'Plus Jakarta Sans', sans-serif;
+			scroll-behavior: smooth;
+		}
+
+
+		.chart-container {
+			position: relative;
+			width: 100%;
+			height: 300px;
+		}
+
+
+		.glass-panel {
+			background: rgba(15, 23, 42, 0.7);
+			border: 1px solid rgba(255, 255, 255, 0.05);
+			border-radius: 1.5rem;
+			backdrop-filter: blur(12px);
+		}
+
+
+		.gradient-text {
+			background: linear-gradient(135deg, #22d3ee 0%, #e879f9 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+
+		.font-mono { font-family: 'Fira Code', monospace; }
+
+
+		.nav-link {
+			font-size: 0.7rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			transition: color 0.2s ease;
+		}
+		.nav-link:hover { color: var(--cyan-400); }
+
+
+		.pulse-emerald {
+			animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+		}
+		@keyframes pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: .5; }
+		}
+
+
+		.matrix-row {
+			border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+			transition: background 0.2s ease;
+		}
+		.matrix-row:hover { background: rgba(34, 211, 238, 0.03); }
+	</style>
+</head>
+<body class="p-0 m-0 overflow-x-hidden">
+
+
+	<!-- NAVIGATION -->
+	<nav class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-900 py-4 px-8">
+		<div class="max-w-7xl mx-auto flex justify-between items-center">
+			<div class="flex items-center space-x-2">
+				<div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-fuchsia-500 rounded-lg shadow-lg shadow-cyan-500/20"></div>
+				<span class="font-bold tracking-tighter text-lg uppercase font-mono">SBS.com</span>
+			</div>
+			<div class="hidden md:flex space-x-8">
+				<a href="#theory" class="nav-link text-slate-400">Theory</a>
+				<a href="#matrix" class="nav-link text-slate-400">Matrix</a>
+				<a href="#dashboard" class="nav-link text-slate-400">Live Engine</a>
+				<a href="https://signalbasedsystems.org" target="_blank" class="nav-link text-cyan-400">Sanctuary (.org)</a>
+			</div>
+			<a href="https://signalbasesystems.app" target="_blank" class="px-4 py-2 bg-fuchsia-500 text-white text-[10px] font-bold uppercase rounded-full hover:bg-fuchsia-400 transition">Open App</a>
+		</div>
+	</nav>
+
+
+	<!-- HERO SECTION -->
+	<section class="relative pt-40 pb-24 px-6 text-center overflow-hidden">
+		<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#22d3ee 1px, transparent 1px); background-size: 40px 40px;"></div>
+		<div class="max-w-5xl mx-auto relative z-10">
+			<h5 class="text-amber-500 font-mono text-xs uppercase tracking-[0.5em] mb-4">Born Mature. Built for Equilibrium.</h5>
+			<h1 class="text-6xl md:text-8xl font-extrabold mb-8 leading-[1.1]">
+				Detecting the <span class="gradient-text italic">Snap</span>
+			</h1>
+			<p class="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto font-light leading-relaxed">
+				Signal-Based Management Systems provide systemic clarity in high-entropy regimes. We measure the handshake between **Regional Load** and **Localized Focus** to reveal the trajectory of failure.
+			</p>
+			<div class="mt-12 flex flex-wrap justify-center gap-6">
+				<div class="p-4 glass-panel flex items-center space-x-3">
+					<span class="text-cyan-400 font-mono text-xs">V: Capacity</span>
+					<div class="w-12 h-1 bg-cyan-950 rounded-full overflow-hidden"><div class="w-2/3 h-full bg-cyan-400"></div></div>
+				</div>
+				<div class="p-4 glass-panel flex items-center space-x-3 text-fuchsia-400">
+					<span class="font-mono text-xs">S: Signal</span>
+					<div class="w-12 h-1 bg-fuchsia-950 rounded-full overflow-hidden"><div class="w-1/2 h-full bg-fuchsia-500"></div></div>
+				</div>
+				<div class="p-4 glass-panel flex items-center space-x-3 text-amber-500">
+					<span class="font-mono text-xs">M: Maturity</span>
+					<div class="w-12 h-1 bg-amber-950 rounded-full overflow-hidden"><div class="w-5/6 h-full bg-amber-500"></div></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<main class="max-w-7xl mx-auto px-6 space-y-32 py-20">
+
+
+		<!-- SECTION 1: THE UNIFIED THEORY -->
+		<section id="theory" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+			<div class="lg:col-span-5 space-y-6">
+				<h2 class="text-4xl font-extrabold">The Unified Theory of Rupture</h2>
+				<p class="text-slate-400 leading-relaxed">
+					Most systems fail because they ignore the **Second Derivative ($d^2S/dt^2$)**. Whether it is a winter storm anchoring over the Seacoast or a financial market losing its steering, the anatomy of "The Snap" is universal.
+				</p>
+				<div class="space-y-4">
+					<div class="p-6 bg-slate-900 rounded-2xl border border-cyan-400/20">
+						<h4 class="text-cyan-400 font-bold mb-2 uppercase text-xs tracking-widest">1. The Regional Engine</h4>
+						<p class="text-sm text-slate-300">The massive source of raw potential energy (Debt, Bombogenesis, Tectonics).</p>
+					</div>
+					<div class="p-6 bg-slate-900 rounded-2xl border border-fuchsia-500/20">
+						<h4 class="text-fuchsia-500 font-bold mb-2 uppercase text-xs tracking-widest">2. The Localized Nozzle</h4>
+						<p class="text-sm text-slate-300">The specific structural point where that energy is focused and squeezed.</p>
+					</div>
+					<div class="p-6 bg-slate-900 rounded-2xl border border-amber-500/20">
+						<h4 class="text-amber-500 font-bold mb-2 uppercase text-xs tracking-widest">3. The Amplifying Cap</h4>
+						<p class="text-sm text-slate-300">The constraint that prevents release, allowing pressure to turn terminal.</p>
+					</div>
+				</div>
+			</div>
+			<div class="lg:col-span-7 glass-panel p-8">
+				<div id="plotlyPhaseSpace" class="w-full h-[500px]"></div>
+				<p class="text-center text-[10px] font-mono text-slate-500 mt-4 uppercase">Trajectory Simulation: Equilibrium vs. Fracture Regime</p>
+			</div>
+		</section>
+
+
+		<!-- SECTION 2: THE UNIVERSAL FAILURE MATRIX -->
+		<section id="matrix" class="space-y-12">
+			<div class="text-center max-w-3xl mx-auto">
+				<h2 class="text-4xl font-extrabold mb-4">The Failure Matrix</h2>
+				<p class="text-slate-400">Mapping the "handshake" across all scales. From the atmosphere to the solar dynamo.</p>
+			</div>
+
+
+			<div class="glass-panel overflow-hidden">
+				<div class="overflow-x-auto">
+					<table class="w-full text-left">
+						<thead class="bg-slate-900 border-b border-slate-800 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+							<tr>
+								<th class="p-6">System Domain</th>
+								<th class="p-6">The Engine (L)</th>
+								<th class="p-6">The Nozzle (Focus)</th>
+								<th class="p-6">The Cap (Amplifier)</th>
+								<th class="p-6">Target Metric</th>
+							</tr>
+						</thead>
+						<tbody class="text-xs text-slate-400" id="matrix-body">
+							<!-- Injected by script -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+
+
+		<!-- SECTION 3: THE LIVE DASHBOARD (REPLACING THE OLD TRACKER) -->
+		<section id="dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+			<div class="lg:col-span-1 space-y-6">
+				<h2 class="text-3xl font-bold">Signal Intelligence Dashboard</h2>
+				<p class="text-slate-400 leading-relaxed">
+					This is the modernized **Intuition Tracker**. Instead of static text, we monitor real-time signal restoration rates to calculate the **Sustainability Buffer (B).**
+				</p>
+				<div class="glass-panel p-8 space-y-6 border-cyan-400/20">
+					<div>
+						<div class="flex justify-between items-center mb-1">
+							<span class="text-[10px] font-mono text-slate-500 uppercase">System Stability</span>
+							<span class="text-emerald-500 text-[10px] font-bold pulse-emerald uppercase">Operational</span>
+						</div>
+						<div class="text-4xl font-extrabold text-white">92.4%</div>
+					</div>
+					<div class="grid grid-cols-2 gap-4">
+						<div class="p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+							<p class="text-[10px] font-mono text-slate-500 mb-1 uppercase">Recovery Velocity</p>
+							<p class="text-xl font-bold text-cyan-400">0.85</p>
+						</div>
+						<div class="p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+							<p class="text-[10px] font-mono text-slate-500 mb-1 uppercase">Extraction Cost</p>
+							<p class="text-xl font-bold text-fuchsia-500">14%</p>
+						</div>
+					</div>
+					<div class="pt-4 border-t border-slate-800">
+						<p class="text-[10px] font-mono text-slate-500 mb-2 uppercase">Status Update</p>
+						<p class="text-xs italic text-slate-400">"Awaiting Miller B transfer confirmation for Epoch 04."</p>
+					</div>
+				</div>
+			</div>
+			<div class="lg:col-span-2 glass-panel p-8">
+				<h4 class="text-center text-[10px] font-mono text-slate-500 mb-6 uppercase tracking-widest">Real-Time Signal Integrity SI(t)</h4>
+				<div class="chart-container">
+					<canvas id="chartIntegrity"></canvas>
+				</div>
+				<div class="mt-8 flex justify-center space-x-12">
+					<div class="flex items-center space-x-2">
+						<div class="w-3 h-3 bg-cyan-400 rounded-full"></div>
+						<span class="text-[10px] font-mono text-slate-400 uppercase">Reported Proxy (V)</span>
+					</div>
+					<div class="flex items-center space-x-2">
+						<div class="w-3 h-3 bg-fuchsia-500 rounded-full"></div>
+						<span class="text-[10px] font-mono text-slate-400 uppercase">Actual Signal (S)</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+		<!-- FOOTER / ECOSYSTEM -->
+		<footer class="py-24 border-t border-slate-900">
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+				<div>
+					<h5 class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">The Sanctuary (.org)</h5>
+					<p class="text-xs text-slate-400 leading-relaxed mb-4">Host for our ethical baselines, whitepapers, and GPLv3 licensed logic. The home for the "Endowment."</p>
+					<a href="https://signalbasedsystems.org" class="text-cyan-400 text-[10px] font-bold uppercase hover:underline">Explore Research →</a>
+				</div>
+				<div>
+					<h5 class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">The Engine (.io)</h5>
+					<p class="text-xs text-slate-400 leading-relaxed mb-4">Host for high-fidelity data ingestion and the EPV/WISHE processing cores. Built for analysts.</p>
+					<span class="text-slate-600 text-[10px] font-bold uppercase">Staged for Deployment →</span>
+				</div>
+				<div>
+					<h5 class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">The App (.app)</h5>
+					<p class="text-xs text-slate-400 leading-relaxed mb-4">The PWA command center for interactive dashboards and user-scoped risk modeling.</p>
+					<a href="https://signalbasesystems.app" class="text-fuchsia-500 text-[10px] font-bold uppercase hover:underline">Launch Tool →</a>
+				</div>
+			</div>
+			<div class="text-center pt-12 border-t border-slate-900/50">
+				<p class="text-[10px] font-mono text-slate-700 uppercase tracking-[0.5em]">
+					Signal-Based Management Systems, LLC | Non-Linear Diagnostics | Nascent in 2026
+				</p>
+			</div>
+		</footer>
+
+
+	</main>
+
+
+	<script>
+		// MATRIX DATA
+		const matrixData = [
+			{ sys: "Winter Storms", eng: "Bombogenesis", noz: "Frontogenesis", cap: "Thermal Inversion", met: "EPV (Potential Vorticity)" },
+			{ sys: "Supercells", eng: "Low-Level Jet", noz: "Mesocyclone", cap: "Capping Inversion", met: "Vorticity Stretch" },
+			{ sys: "Tropical Systems", eng: "Ocean Heat", noz: "The Eyewall", cap: "Trade Wind Inversion", met: "WISHE Efficiency" },
+			{ sys: "Volcanoes", eng: "Plate Subduction", noz: "Magma Chamber", cap: "Overlying Rock", met: "Magma Viscosity" },
+			{ sys: "Earthquakes", eng: "Tectonic Load", noz: "Asperity", cap: "Static Friction", met: "Pre-seismic Hum" },
+			{ sys: "Tsunamis", eng: "Displacement", noz: "Continental Shelf", cap: "Deep Pressure", met: "Ionospheric Perturbation" },
+			{ sys: "Solar Flares", eng: "Convection Zone", noz: "Reconnection", cap: "Magnetic Tension", met: "Helicity Injection" }
+		];
+
+
+		const body = document.getElementById('matrix-body');
+		matrixData.forEach(d => {
+			const row = document.createElement('tr');
+			row.className = "matrix-row";
+			row.innerHTML = `
+				<td class="p-6 font-bold text-white">${d.sys}</td>
+				<td class="p-6">${d.eng}</td>
+				<td class="p-6">${d.noz}</td>
+				<td class="p-6 text-amber-500 font-mono">${d.cap}</td>
+				<td class="p-6 text-cyan-400 italic">${d.met}</td>
+			`;
+			body.appendChild(row);
+		});
+
+
+		// CHART.JS: INTEGRITY MONITOR
+		const ctxIntegrity = document.getElementById('chartIntegrity').getContext('2d');
+		new Chart(ctxIntegrity, {
+			type: 'line',
+			data: {
+				labels: ['01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00'],
+				datasets: [{
+					label: 'Reported Proxy (V)',
+					data: [100, 101, 102, 101, 102, 103, 102, 101],
+					borderColor: '#22d3ee',
+					tension: 0.4,
+					borderWidth: 2,
+					pointRadius: 0
+				}, {
+					label: 'Actual Signal (S)',
+					data: [98, 92, 85, 70, 50, 42, 38, 35],
+					borderColor: '#e879f9',
+					backgroundColor: 'rgba(232, 121, 249, 0.05)',
+					fill: true,
+					tension: 0.4,
+					borderWidth: 3
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: { legend: { display: false } },
+				scales: {
+					x: { grid: { display: false }, ticks: { color: '#475569', font: { size: 10 } } },
+					y: { grid: { color: 'rgba(255,255,255,0.02)' }, ticks: { color: '#475569', font: { size: 10 } } }
+				}
+			}
+		});
+
+
+		// PLOTLY: 3D PHASE SPACE
+		const size = 50;
+		const xValues = Array.from({length: size}, (_, i) => i / (size - 1));
+		const yValues = Array.from({length: size}, (_, i) => i / (size - 1));
+		const zValues = [];
+
+
+		for (let i = 0; i < size; i++) {
+			zValues[i] = [];
+			for (let j = 0; j < size; j++) {
+				const x = xValues[i] - 0.5;
+				const y = yValues[j] - 0.5;
+				// Complex saddle shape representing the bifurcation ridge
+				zValues[i][j] = (x * x) - (y * y);
+			}
+		}
+
+
+		const plotlyData = [{
+			z: zValues, x: xValues, y: yValues,
+			type: 'surface',
+			colorscale: [[0, '#f43f5e'], [0.5, '#f59e0b'], [1, '#22d3ee']],
+			showscale: false,
+			opacity: 0.8
+		}];
+
+
+		const plotlyLayout = {
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			plot_bgcolor: 'rgba(0,0,0,0)',
+			margin: { l: 0, r: 0, b: 0, t: 0 },
+			scene: {
+				xaxis: { visible: false },
+				yaxis: { visible: false },
+				zaxis: { visible: false },
+				camera: { eye: { x: 1.6, y: 1.6, z: 1.2 } }
+			},
+			font: { family: 'Plus Jakarta Sans', color: '#f1f5f9' }
+		};
+
+
+		Plotly.newPlot('plotlyPhaseSpace', plotlyData, plotlyLayout, {responsive: true, displayModeBar: false});
+
+
+	</script>
+</body>
 </html>
